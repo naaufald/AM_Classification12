@@ -1,0 +1,74 @@
+---
+title: "AM_klasifikasisaham"
+author: "Naufal Fadhlullah"
+date: "2025-11-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+saham <- read_excel("D:/Matana/Semester 5/ANALISIS MULTIVARIAT/saham saham/rangkuman saham.xlsx")
+saham
+```
+```{r}
+data_cluster <- saham[, -1]
+set.seed(123)  # biar hasilnya konsisten
+k2 <- kmeans(data_cluster, centers = 2)
+k2$cluster
+k2$centers
+```
+```{r}
+set.seed(123)
+k3 <- kmeans(data_cluster, centers = 3)
+k3$cluster
+k3$centers
+```
+```{r}
+print(k2)
+```
+```{r}
+print(k3)
+```
+```{r}
+library(cluster)
+sil_c3 <- silhouette(k3$cluster, dist(saham))
+avg_sil <- mean(sil_c3[,"sil_width"])
+cat("average  silhouette width:", avg_sil)
+```
+```{r}
+library(cluster)
+sil_c2 <- silhouette(k2$cluster, dist(saham))
+avg_sil <- mean(sil_c2[,"sil_width"])
+cat("average  silhouette width:", avg_sil)
+```
+```{r}
+library(factoextra)
+fviz_cluster(k2, data = data_cluster)
+```
+```{r}
+library(ppclust)
+fcm_c3 <- fcm(x=data_cluster, centers = 3)
+summary(fcm_c3)
+```
+```{r}
+res.fcm3 <- ppclust2(fcm_c3, "kmeans")
+factoextra::fviz_cluster(res.fcm3, data_cluster,
+                         ellipse.type = "convex",
+                         palette = "jco",
+                         repel = TRUE)
+```
+```{r}
+sil_c3 <- silhouette(k3$cluster, dist(saham))
+avg_sil <- mean(sil_c3[,"sil_width"])
+cat("average  silhouette width:", avg_sil)
+```
+```{r}
+sil_c33 <- silhouette(fcm_c3$cluster, dist(saham))
+avg_sil <- mean(sil_c33[,"sil_width"])
+cat("average  silhouette width:", avg_sil)
+```
+
